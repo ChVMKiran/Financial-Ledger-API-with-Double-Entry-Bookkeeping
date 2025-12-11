@@ -1,0 +1,179 @@
+{
+  "info": {
+    "_postman_id": "c55ce59c-ffc1-4f44-823e-32efledger9999",
+    "name": "Financial Ledger API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "GET - Health",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/health",
+              "host": ["{{baseUrl}}"],
+              "path": ["health"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Accounts",
+      "item": [
+        {
+          "name": "POST - Create Account A",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user1\",\n  \"accountType\": \"savings\",\n  \"currency\": \"INR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["accounts"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "pm.environment.set(\"accountA\", res.id);",
+                  "pm.test(\"Saved Account A ID\", () => pm.expect(res.id).to.exist );"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "POST - Create Account B",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"userId\": \"user2\",\n  \"accountType\": \"current\",\n  \"currency\": \"INR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/accounts",
+              "host": ["{{baseUrl}}"],
+              "path": ["accounts"]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();",
+                  "pm.environment.set(\"accountB\", res.id);",
+                  "pm.test(\"Saved Account B ID\", () => pm.expect(res.id).to.exist );"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "GET - Get Account A (with Balance)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/accounts/{{accountA}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["accounts", "{{accountA}}"]
+            }
+          }
+        },
+        {
+          "name": "GET - Get Ledger for Account A",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/accounts/{{accountA}}/ledger",
+              "host": ["{{baseUrl}}"],
+              "path": ["accounts", "{{accountA}}", "ledger"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Deposits",
+      "item": [
+        {
+          "name": "POST - Deposit into Account A",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{accountA}}\",\n  \"amount\": 500,\n  \"currency\": \"INR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/deposits",
+              "host": ["{{baseUrl}}"],
+              "path": ["deposits"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Withdrawals",
+      "item": [
+        {
+          "name": "POST - Withdraw from Account A",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"accountId\": \"{{accountA}}\",\n  \"amount\": 200,\n  \"currency\": \"INR\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/withdrawals",
+              "host": ["{{baseUrl}}"],
+              "path": ["withdrawals"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Transfers",
+      "item": [
+        {
+          "name": "POST - Transfer A → B",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"fromAccountId\": \"{{accountA}}\",\n  \"toAccountId\": \"{{accountB}}\",\n  \"amount\": 300,\n  \"currency\": \"INR\",\n  \"description\": \"Test transfer\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/transfers",
+              "host": ["{{baseUrl}}"],
+              "path": ["transfers"]
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:3000" },
+    { "key": "accountA", "value": "" },
+    { "key": "accountB", "value": "" }
+  ]
+}
